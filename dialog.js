@@ -12,6 +12,15 @@ const cel = (root = document.body, tag = 'div', cname) => {
 	return res
 }
 
+const id_gen = (initial = 0) => {
+	let id = initial
+	return () => {
+		return id++
+	}
+}
+
+const uuid = id_gen(42)
+
 const add_comment = (
 	id = 0,
 	repl = null,
@@ -20,14 +29,14 @@ const add_comment = (
 ) => ({id, repl, from, text})
 
 const post = {
-	id: 1492,
+	id: null,
 	from: 'OP',
 	title: 'My wonderful post!',
-	text: 'Look at my post, my post is amazing!',
+	text: 'Реализация, конечно, говно, но ключевая идея такова: нахуя строить "лестницы", в диалогах? То есть, когда люди последовательно отвечают друг другу.',
 }
 
 const comments = [
-	add_comment(1, null, 'A', 'Kitties are cute'),
+	/* add_comment(1, null, 'A', 'Kitties are cute'),
 	add_comment(2, 1, 'B', 'No they are not'),
 	add_comment(3, 2, 'A', 'Why?'),
 	add_comment(4, 3, 'B', 'Because'),
@@ -44,8 +53,40 @@ const comments = [
 
 	add_comment(11, null, 'OP', 'Well that escalated fast'),
 	add_comment(12, 2, 'OP', 'Why so grumpy?'),
-	add_comment(13, 7, 'B', 'NO U'),
+	add_comment(13, 7, 'B', 'NO U'), */
 ]
+
+const toggle_reply = (show = false) => {
+	if (show) {
+		gel('repl').classList.remove('hidden')
+	} else {
+		gel('repl').classList.add('hidden')
+	}
+	gel('user-name').value = ''
+	gel('answer-text').value = ''
+}
+
+const reply_handler = (target) => {
+	return () => {
+		toggle_reply(true)
+		gel('send-reply').onclick = () => { add_reply(target) }
+		setTimeout(() => {
+			gel('user-name').focus()
+		}, 0)
+	}
+}
+
+const add_reply = (target) => {
+	const comm = add_comment(
+		uuid(),
+		target,
+		gel('user-name').value,
+		gel('answer-text').value,
+	)
+	comments.push(comm)
+	build_tree()
+	toggle_reply(false)
+}
 
 const text_block = (body, data) => {
 	const el = cel(body)
@@ -70,6 +111,7 @@ const text_block = (body, data) => {
 	const crud = cel(el, 'div', 'crud')
 	const repl = cel(crud, 'button')
 	repl.textContent = 'reply'
+	repl.onclick = reply_handler(data?.id)
 
 	return el
 }
@@ -103,6 +145,7 @@ const create_comm = (comm, root) => {
 }
 
 const build_tree = () => {
+	gel('comm').innerHTML = ''
 	const root = cel(gel('comm'))
 	
 	// build tree

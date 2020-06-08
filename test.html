@@ -2,6 +2,13 @@
 <html>
 	<head>
 		<style>
+			* {
+				box-sizing: border-box;
+				transition: .15s;
+			}
+			body {
+				margin-bottom: 240px;
+			}
 			.rep-box {
 				display: flex;
 				flex-flow: column;
@@ -45,10 +52,40 @@
 			.column:hover {
 				background-color: #ccc;
 			}
+			.answer-box {
+				max-width: 480px;
+				margin: 0px auto;
+				display: flex;
+				flex-flow: column;
+				padding: 1em;
+				border: 1px solid;
+				background-color: #eee;
+			}
+			.bottom {
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				right: 0;
+			}
+			.hidden {
+				max-height: 0px;
+				overflow: hidden;
+				opacity: 0;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="comm"></div>
+		<div id="repl" class="bottom hidden">
+			<div class="answer-box">
+				User:
+				<input id="user-name" />
+				<div></div>
+				Comment:
+				<textarea id="answer-text"></textarea>
+				<button id="send-reply">Send</button>
+			</div>
+		</div>
 	</body>
 	<script src="dialog.js"></script>
 </html>
